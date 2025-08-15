@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import Header from "@/components/header"
+import React from "react"
 
 interface Question {
   _id: string
@@ -26,15 +27,24 @@ interface Question {
   correctOption: number
 }
 
+// interface QuestionsPageProps {
+//   params: {
+//     testType: string
+//     testId: string
+//   }
+// }
 interface QuestionsPageProps {
-  params: {
+  params: Promise<{
     testType: string
     testId: string
-  }
+  }>
 }
 
 export default function QuestionsPage({ params }: QuestionsPageProps) {
-  const { testType, testId } = params
+  // const { testType, testId } = params
+  // const router = useRouter()
+    const resolvedParams = React.use(params)
+  const { testType, testId } = resolvedParams
   const router = useRouter()
 
   const [testName, setTestName] = useState("")
@@ -48,39 +58,58 @@ export default function QuestionsPage({ params }: QuestionsPageProps) {
   const [confirmationText, setConfirmationText] = useState("")
   const [deleteLoading, setDeleteLoading] = useState(false)
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true)
+  //       // Fetch questions
+  //       const questionsResponse = await api.get(`/questions/test/${testId}`)
+  //       setQuestions(questionsResponse.data)
+  //     } catch (error: any) {
+  //       console.error("Error fetching questions data:", error)
+  //       setError("Failed to load questions data. Please try again.")
+
+  //       // If unauthorized, redirect to login
+  //       if (error.response?.status === 401) {
+  //         localStorage.removeItem("token")
+  //         router.push("/login")
+  //       }
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   fetchData()
+  // }, [testId, testType, router])
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-
-        // Fetch test details to get the name
-        // let testResponse
-        // if (testType === "SectionTest") {
-        //   testResponse = await api.get(`/section-tests/${testId}`)
-        // } else {
-        //   testResponse = await api.get(`/mock-tests/${testId}`)
-        // }
-        // setTestName(testResponse.data.name)
-
-        // Fetch questions
-        const questionsResponse = await api.get(`/questions/test/${testId}`)
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      console.log("Fetching questions for testId:", testId)
+      const questionsResponse = await api.get(`/questions/test/${testId}`)
+      // If no questions are returned, treat it as an empty array
+      if (questionsResponse.data.length === 0) {
+        setQuestions([])
+        setError("No questions found for this test.")
+      } else {
         setQuestions(questionsResponse.data)
-      } catch (error: any) {
-        console.error("Error fetching questions data:", error)
-        setError("Failed to load questions data. Please try again.")
-
-        // If unauthorized, redirect to login
-        if (error.response?.status === 401) {
-          localStorage.removeItem("token")
-          router.push("/login")
-        }
-      } finally {
-        setLoading(false)
       }
+    } catch (error: any) {
+      console.error("Error fetching questions data:", error)
+      // If 404 is received, consider it as no data found instead of an error state
+      if (error.response?.status === 404) {
+        setQuestions([])
+        setError("No questions found for this test.")
+      } else {
+        setError("Failed to load questions data. Please try again.")
+      }
+    } finally {
+      setLoading(false)
     }
-
-    fetchData()
-  }, [testId, testType, router])
+  }
+  fetchData()
+}, [testId, testType, router])
 
   const openDeleteDialog = (id: string, text: string) => {
     setQuestionToDelete({ id, text })

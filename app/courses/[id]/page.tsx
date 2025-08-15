@@ -1,5 +1,5 @@
 "use client"
-
+import React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
@@ -40,15 +40,23 @@ interface MockTest {
   instructions: string[]
 }
 
+// interface CourseDetailsProps {
+//   params: {
+//     id: string
+//   }
+// }
 interface CourseDetailsProps {
-  params: {
-    id: string
-  }
+  params: Promise<{ id: string }>
 }
 
 export default function CourseDetailsPage({ params }: CourseDetailsProps) {
-  console.log("CourseDetailsPage params:", params.id)
-  const courseId = params?.id;
+
+    const resolvedParams = React.use(params)
+  console.log("CourseDetailsPage params:", resolvedParams.id)
+  const courseId = resolvedParams.id
+
+  // console.log("CourseDetailsPage params:", params.id)
+  // const courseId = params?.id;
   // const courseId = params.id
   const router = useRouter()
 

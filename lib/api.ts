@@ -6,6 +6,7 @@ import axios from "axios"
 const api = axios.create({
   // baseURL: "https://elite-academy-ebon.vercel.app/api",
   baseURL: "https://elite-academy-production.up.railway.app/api",
+  // baseURL: "http://192.168.18.15:4000/api",
 })
 
 // Add a request interceptor to include the auth token
