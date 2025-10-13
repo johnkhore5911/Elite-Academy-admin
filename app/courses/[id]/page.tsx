@@ -174,7 +174,7 @@ export default function CourseDetailsPage({ params }: CourseDetailsProps) {
             <TabsTrigger value="mock-tests">Mock Tests</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="section-tests">
+          {/* <TabsContent value="section-tests">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-[#1f2937]">Section Tests</h2>
               <Button
@@ -189,11 +189,13 @@ export default function CourseDetailsPage({ params }: CourseDetailsProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {sectionTests.length > 0 ? (
                 sectionTests.map((test) => (
-                  <Card
-                    key={test._id}
-                    className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => navigateToTestQuestions(test._id, "SectionTest")}
-                  >
+                  // <Card
+                  //   key={test._id}
+                  //   className="cursor-pointer hover:shadow-md transition-shadow"
+                  //   onClick={() => navigateToTestQuestions(test._id, "SectionTest")}
+                  // >
+                  <Card 
+                  key={test._id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-4 relative">
                       <div
                         className="absolute top-2 right-2 p-1 rounded-full bg-white hover:bg-red-100"
@@ -227,6 +229,20 @@ export default function CourseDetailsPage({ params }: CourseDetailsProps) {
                           <p className="text-[#6b7280]">Time Limit</p>
                           <p className="font-medium">{test.timeLimitMinutes} min</p>
                         </div>
+
+                        <div className="mt-4">
+  <Button
+    onClick={(e) => {
+      e.stopPropagation();
+      router.push(`/section-tests/${test._id}`);
+    }}
+    className="bg-[#3b82f6] hover:bg-[#2563eb] w-full"
+  >
+    View Subsections
+  </Button>
+</div>
+
+
                       </div>
                     </CardContent>
                   </Card>
@@ -235,7 +251,76 @@ export default function CourseDetailsPage({ params }: CourseDetailsProps) {
                 <p className="text-[#6b7280] col-span-3">No section tests found. Add your first section test!</p>
               )}
             </div>
-          </TabsContent>
+          </TabsContent> */}
+
+          <TabsContent value="section-tests">
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-2xl font-bold text-[#1f2937]">Section Tests</h2>
+    <Button
+      onClick={() => router.push(`/section-tests/create?courseId=${courseId}`)}
+      className="bg-[#3b82f6] hover:bg-[#2563eb]"
+    >
+      <Plus className="h-4 w-4 mr-2" />
+      Add Section Test
+    </Button>
+  </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {sectionTests.length > 0 ? (
+      sectionTests.map((test) => (
+        <Card key={test._id} className="hover:shadow-md transition-shadow">
+          <CardContent className="p-4 relative">
+            <div
+              className="absolute top-2 right-2 p-1 rounded-full bg-white hover:bg-red-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                openDeleteDialog(test._id, "section", test.name);
+              }}
+            >
+              <Trash2 className="h-4 w-4 text-[#dc2626]" />
+            </div>
+            <div className="flex items-center space-x-4 mb-3">
+              <div className="bg-gradient-to-br from-[#ffffff] to-[#f0fdf4] rounded-full p-2 border">
+                <FileText className="h-5 w-5 text-[#3b82f6]" />
+              </div>
+              <div>
+                <h3 className="font-medium text-[#1f2937]">{test.name}</h3>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <div className="text-xs">
+                <p className="text-[#6b7280]">Questions</p>
+                <p className="font-medium">{test.totalQuestions}</p>
+              </div>
+              <div className="text-xs">
+                <p className="text-[#6b7280]">Marks</p>
+                <p className="font-medium">{test.totalMarks}</p>
+              </div>
+              <div className="text-xs">
+                <p className="text-[#6b7280]">Time Limit</p>
+                <p className="font-medium">{test.timeLimitMinutes} min</p>
+              </div>
+            </div>
+            {/* THIS IS THE NEW PART - ADD THIS */}
+            <div className="mt-4">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/section-tests/${test._id}`);
+                }}
+                className="bg-[#3b82f6] hover:bg-[#2563eb] w-full"
+              >
+                View Subsections
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))
+    ) : (
+      <p className="text-[#6b7280] col-span-3">No section tests found. Add your first section test!</p>
+    )}
+  </div>
+</TabsContent>
+
 
           <TabsContent value="mock-tests">
             <div className="flex justify-between items-center mb-4">
