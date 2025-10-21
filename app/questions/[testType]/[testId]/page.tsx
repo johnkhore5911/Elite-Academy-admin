@@ -221,12 +221,11 @@
 
 
 "use client"
-
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Loader2, Plus, Trash2 } from "lucide-react"
+import { Loader2, Plus, Trash2,Edit } from "lucide-react"
 import { api } from "@/lib/api"
 import {
   Dialog,
@@ -377,12 +376,29 @@ export default function QuestionsPage({ params }: QuestionsPageProps) {
             questions.map((question) => (
               <Card key={question._id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 relative">
-                  <div
+                  {/*<div
                     className="absolute top-2 right-2 p-1 rounded-full bg-white hover:bg-red-100 cursor-pointer"
                     onClick={() => openDeleteDialog(question._id, question.questionText)}
                   >
                     <Trash2 className="h-4 w-4 text-[#dc2626]" />
                   </div>
+                  */}
+                  <div className="absolute top-2 right-2 flex gap-2">
+  {/* Edit Button */}
+  <div className="p-1 rounded-full bg-white hover:bg-blue-100 cursor-pointer" 
+    onClick={(e) => {
+      e.stopPropagation();
+      router.push(`/questions/edit?testType=${testType}&testId=${testId}&questionId=${question._id}`);
+    }}>
+    <Edit className="h-4 w-4 text-3b82f6" />
+  </div>
+  
+  {/* Delete Button */}
+  <div className="p-1 rounded-full bg-white hover:bg-red-100 cursor-pointer" 
+    onClick={() => openDeleteDialog(question._id, question.questionText)}>
+    <Trash2 className="h-4 w-4 text-dc2626" />
+  </div>
+</div>
 
                   <div className="mb-4">
                     <h3 className="font-medium text-[#1f2937]">{question.questionText}</h3>
