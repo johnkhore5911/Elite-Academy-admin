@@ -274,7 +274,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import Header from "@/components/header"
 
 interface Course {
@@ -287,9 +286,19 @@ interface Course {
   updatedAt: string
 }
 
+interface User {
+  _id: string
+  email: string
+  name: string | null
+  phoneNumber: string | null
+  createdAt: string | null
+  uniqueCourseNames: string[]
+  recentTests: any[]
+}
+
 export default function DashboardPage() {
   const router = useRouter()
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -388,31 +397,90 @@ export default function DashboardPage() {
         {/* Students Section */}
         <section className="mb-10">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-[#1f2937]">Students</h2>
+            <h2 className="text-2xl font-bold text-[#1f2937]">
+              Students ({users.length})
+            </h2>
           </div>
-            <ScrollArea className="w-full overflow-x-auto pb-4">
-              <div className="flex space-x-4 min-w-max">
+          <div className="overflow-x-auto pb-4">
+            <div className="flex space-x-4 min-w-max">
               {users.length > 0 ? (
-                users.map((user) => (
-                  <Card key={user._id} className="min-w-[250px] bg-gradient-to-br from-[#ffffff] to-[#f0fdf4]">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="bg-[#3b82f6] rounded-full p-2">
-                          <UserIcon className="h-5 w-5 text-white" />
+                users.map((user) => {
+                  // Format createdAt date or show N/A
+                  const createdAtDisplay = user.createdAt 
+                    ? new Date(user.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })
+                    : 'N/A';
+                  // Get unique course names
+                  const courseNames = user.uniqueCourseNames || [];
+                  
+                  return (
+                    <Card key={user._id} className="min-w-[300px] bg-gradient-to-br from-[#ffffff] to-[#f0fdf4]">
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-4">
+                            <div className="bg-[#3b82f6] rounded-full p-2">
+                              <UserIcon className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-medium text-[#1f2937] truncate">
+                                {user.name || 'No name'}
+                              </h3>
+                            </div>
+                          </div>
+                          
+                          {/* Contact Information */}
+                          <div className="space-y-1">
+                            {user.email && (
+                              <div className="flex items-center text-sm">
+                                <span className="text-[#6b7280] w-20">Email:</span>
+                                <span className="text-[#1f2937] truncate flex-1">{user.email}</span>
+                              </div>
+                            )}
+                            {user.phoneNumber && (
+                              <div className="flex items-center text-sm">
+                                <span className="text-[#6b7280] w-20">Phone:</span>
+                                <span className="text-[#1f2937]">{user.phoneNumber}</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="border-t pt-2 space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs text-[#6b7280]">Created:</span>
+                              <span className="text-xs font-medium text-[#1f2937]">{createdAtDisplay}</span>
+                            </div>
+                            
+                            {/* Course Names - Only show if courses exist */}
+                            {courseNames.length > 0 && (
+                              <div>
+                                <span className="text-xs text-[#6b7280] block mb-1">Courses:</span>
+                                <div className="flex flex-wrap gap-1">
+                                  {courseNames.map((courseName, index) => (
+                                    <span 
+                                      key={index}
+                                      className="text-xs font-medium text-[#3b82f6] bg-blue-50 px-2 py-1 rounded"
+                                      title={courseName}
+                                    >
+                                      {courseName}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-medium text-[#1f2937]">Student</h3>
-                          <p className="text-sm text-[#6b7280]">{user.email}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                      </CardContent>
+                    </Card>
+                  );
+                })
               ) : (
                 <p className="text-[#6b7280]">No students found.</p>
               )}
             </div>
-          </ScrollArea>
+          </div>
         </section>
 
         {/* Courses Section */}
