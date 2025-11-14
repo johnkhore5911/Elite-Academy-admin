@@ -373,7 +373,7 @@ export default function QuestionsPage({ params }: QuestionsPageProps) {
 
         <div className="grid grid-cols-1 gap-4">
           {questions.length > 0 ? (
-            questions.map((question) => (
+            questions.map((question, index) => (
               <Card key={question._id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4 relative">
                   {/*<div
@@ -401,7 +401,7 @@ export default function QuestionsPage({ params }: QuestionsPageProps) {
 </div>
 
                   <div className="mb-4">
-                    <h3 className="font-medium text-[#1f2937]">{question.questionText}</h3>
+                    <h3 className="font-medium text-[#1f2937]">{index + 1}. {question.questionText}</h3>
                     {/* Render question image if exists */}
                     {question.questionImage?.url && (
                       <img
